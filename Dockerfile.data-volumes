@@ -1,0 +1,14 @@
+FROM eason02/busybox:latest
+
+MAINTAINER Eason Lau <eason.lau02@hotmail.com>
+
+
+# Elasticsearch
+RUN mkdir -p /usr/share/elasticsearch/config/ && \
+    mkdir -p /usr/share/elasticsearch/plugins/
+
+COPY ./elasticsearch/config/ /usr/share/elasticsearch/config/
+COPY ./elasticsearch/plugins/ /usr/share/elasticsearch/plugins/
+
+RUN ls -ltra /usr/share/elasticsearch/config/ && \
+    ls -ltra /usr/share/elasticsearch/plugins/

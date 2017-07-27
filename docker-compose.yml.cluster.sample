@@ -1,0 +1,76 @@
+esconfiguredata:
+  labels:
+    io.rancher.container.pull_image: always
+  command:
+  - tail
+  - -f
+  - /usr/share/elasticsearch/config/elasticsearch.yml
+  image: eason02/es-data-volume:cluster
+  volumes:
+  - /usr/share/elasticsearch/config/
+  - /usr/share/elasticsearch/plugins/
+  - /usr/share/kibana/plugins/
+elasticsearch1:
+  ports:
+  - 9200:9200/tcp
+  - 9300:9300/tcp
+  environment:
+    cluster.name: es-cluster
+    discovery.zen.minimum_master_nodes: '1'
+    discovery.zen.ping.unicast.hosts: node1,node2,node3
+    node.data: 'true'
+    node.master: 'false'
+    node.name: es-1
+  labels:
+    io.rancher.sidekicks: elkconfiguredata
+    io.rancher.container.pull_image: always
+    io.rancher.scheduler.affinity:host_label: elasticsearch=es1
+  image: eason02/elasticsearch:5.3.1
+  volumes:
+  - /var/log/elasticsearch/logs/:/usr/share/elasticsearch/logs
+  - /usr/data/:/usr/share/elasticsearch/data
+  volumes_from:
+  - esconfiguredata
+elasticsearch2:
+  ports:
+  - 9200:9200/tcp
+  - 9300:9300/tcp
+  environment:
+    cluster.name: es-cluster
+    discovery.zen.minimum_master_nodes: '1'
+    discovery.zen.ping.unicast.hosts: node1,node2,node3 
+    node.data: 'false'
+    node.master: 'true'
+    node.name: es-2
+  labels:
+    io.rancher.sidekicks: elkconfiguredata
+    io.rancher.container.pull_image: always
+    io.rancher.scheduler.affinity:host_label: elasticsearch=es2
+  image: eason02/elasticsearch:5.3.1
+  volumes:
+  - /var/log/elasticsearch/logs/:/usr/share/elasticsearch/logs
+  - /usr/data:/usr/share/elasticsearch/data
+  volumes_from:
+  - esconfiguredata
+elasticsearch3:
+  ports:
+  - 9200:9200/tcp
+  - 9300:9300/tcp
+  environment:
+    cluster.name: es-cluster
+    discovery.zen.minimum_master_nodes: '1'
+    discovery.zen.ping.unicast.hosts: node1,node2,node3
+    node.data: 'true'
+    node.master: 'false'
+    node.name: es-3
+  labels:
+    io.rancher.sidekicks: elkconfiguredata
+    io.rancher.container.pull_image: always
+    io.rancher.scheduler.affinity:host_label: elasticsearch=es3
+  image: eason02/elasticsearch:5.3.1
+  volumes:
+  - /var/log/elasticsearch/logs/:/usr/share/elasticsearch/logs
+  - /usr/data/:/usr/share/elasticsearch/data
+  volumes_from:
+  - esconfiguredata
+
